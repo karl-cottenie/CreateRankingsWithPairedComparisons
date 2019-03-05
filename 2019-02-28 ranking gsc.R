@@ -83,7 +83,6 @@ dfComparisonNumber =  bind_cols(dfComparison,
 
 ## Step 3: create empty matrix
 dfS = array(0, dim = c(nrow(vcNodes), nrow(vcNodes), nrow(dfComparison)))
-#TODO compute total sum across all comparisons: apply(dfS, c(1,2), sum)
 
 ## Step 4: fill empty array the smart way
 for (i in 1:nrow(dfComparisonNumber)) {
