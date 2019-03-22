@@ -91,7 +91,7 @@ dfS = array(0, dim = c(nrow(vcNodes), nrow(vcNodes), nrow(dfComparison)))
 
 ## Step 4: fill empty array the smart way
 for (i in 1:nrow(dfComparisonNumber)) {
-  if (dfComparisonNumber[i,3] == FALSE){
+  if (dfComparisonNumber[i,3] == TRUE){
     dfS[dfComparisonNumber[i,1], dfComparisonNumber[i,2], dfComparisonNumber[i,4]] = 1
   } else {
     dfS[dfComparisonNumber[i,2], dfComparisonNumber[i,1], dfComparisonNumber[i,4]] = 1
