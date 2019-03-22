@@ -35,7 +35,7 @@ library(igraph)
 # https://cran.r-project.org/web/packages/BradleyTerry2/vignettes/BradleyTerry.pdf
 
 ## _Input example from the website -----
-dfComparison = read_table("https://www.anishathalye.com/media/2015/03/07/blueprint-rookie-data.txt", comment = "#", col_names = c("Team1", "Team2", "Team2Better"))
+dfComparison = read_table("https://www.anishathalye.com/media/2015/03/07/blueprint-rookie-data.txt", col_types = "ccc", comment = "#", col_names = c("Team1", "Team2", "Team2Better"))
 
 ## (>_<) __Create S matrix - Method 1 -----
 # rows and colums are the teams, entries count the number of times the row team was
@@ -91,7 +91,7 @@ dfS = array(0, dim = c(nrow(vcNodes), nrow(vcNodes), nrow(dfComparison)))
 
 ## Step 4: fill empty array the smart way
 for (i in 1:nrow(dfComparisonNumber)) {
-  if (dfComparisonNumber[i,3] == TRUE){
+  if (dfComparisonNumber[i,3] == "false"){
     dfS[dfComparisonNumber[i,1], dfComparisonNumber[i,2], dfComparisonNumber[i,4]] = 1
   } else {
     dfS[dfComparisonNumber[i,2], dfComparisonNumber[i,1], dfComparisonNumber[i,4]] = 1
@@ -105,10 +105,10 @@ dfS = apply(dfS, c(1,2), sum)
 # rowsums should equal frequency of each team in Team1 column and TRUE
 # PLUS frequency in Team2 column and FALSE
 
-full_join(dfComparison %>% dplyr::filter(Team2Better == FALSE) %>%
+full_join(dfComparison %>% dplyr::filter(Team2Better == "false") %>%
             group_by(Team1) %>%
             summarise(n1 = n()),
-          dfComparison %>% dplyr::filter(Team2Better == TRUE) %>%
+          dfComparison %>% dplyr::filter(Team2Better == "true") %>%
             group_by(Team2) %>%
             summarise(n2 = n()) %>%
             dplyr::rename(Team1 = Team2)) %>%
@@ -126,10 +126,10 @@ rowSums(dfS)
 ## colsums should equal frequency of each team in Team1 column and FALSE
 ## PLUS frequency in Team2 column and TRUE
 
-(full_join(dfComparison %>% dplyr::filter(Team2Better == TRUE) %>%
+(full_join(dfComparison %>% dplyr::filter(Team2Better == "true") %>%
             group_by(Team1) %>%
             summarise(n1 = n()),
-          dfComparison %>% dplyr::filter(Team2Better == FALSE) %>%
+          dfComparison %>% dplyr::filter(Team2Better == "false") %>%
             group_by(Team2) %>%
             summarise(n2 = n()) %>%
             dplyr::rename(Team1 = Team2)) %>%
@@ -158,7 +158,7 @@ plot.network(judging)
 ## _BradleyTerryScalable approach --------
 
 ## __preparing the data from the raw counts ------
-dfComparison_4col = codes_to_counts(dfComparison, c("FALSE","TRUE"))
+dfComparison_4col = codes_to_counts(dfComparison, c("false","true"))
 dfComparison_btdata = btdata(dfComparison_4col, return_graph = T)
 
 par(mar = c(0, 0, 0, 0) + 0.1)
