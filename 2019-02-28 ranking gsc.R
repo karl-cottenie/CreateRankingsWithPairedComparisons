@@ -11,7 +11,6 @@ library(tidyverse)
 library(viridis)
 # + scale_color/fill_viridis(discrete = T/F)
 theme_set(theme_light())
-library(statnet)
 library(BradleyTerryScalable)
 library(igraph)
 
@@ -146,15 +145,6 @@ colSums(dfS)
 #==> all elements correspond, except for the 2 0's in the colSums(dfS)
 # correspond to the teams that always won
 
-## _Visualize the S matrix -------
-
-judging = as.network(x = dfS,
-                     directed = TRUE,
-                     loops = FALSE,
-                     matrix.type = "adjacency")
-
-plot.network(judging)
-
 ## _BradleyTerryScalable approach --------
 
 ## __preparing the data from the raw counts ------
@@ -181,16 +171,24 @@ coef(Comparisons_fit)
 #==> identical to the coef(Comparsions_fit) above, so yay!
 #==> not use this approach
 
-## __Ploting the model results -----
+## __Plotting the model results -----
 
-summary(Comparisons_fit, SE = T) %>% .$item_summary %>% 
+# create the basic figure
+ggRankings = summary(Comparisons_fit, SE = T) %>% .$item_summary %>% 
   # add the total wins and losses bc more intuitive
   left_join(tibble(item = vcNodes$vcNodes,
                    TotalWins = rowSums(dfS),
                    TotalLosses = colSums(dfS))) %>% 
   ggplot(aes(x = fct_reorder(item, desc(estimate)), y = estimate, 
              ymin = estimate-SE, ymax = estimate + SE)) + 
-  geom_pointrange() + xlab("Item") + ylab("Rank") +
+  geom_pointrange() + xlab("Item") + ylab("Rank")
+
+# print the base figure
+print(ggRankings) 
+#==> find the max and min of the Rank axis, in this case 4 and -10
+
+# Replance the 4 and -10 in code below w/ the top ranks to add total wins and losses
+ggRankings +
   # TotalWins at the top of the figure
   geom_text(aes(x = fct_reorder(item, desc(estimate)), y = 4, label = TotalWins)) +
   # TotalLosses at the bottom of the figure
