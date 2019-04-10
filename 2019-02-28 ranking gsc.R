@@ -194,4 +194,5 @@ ggRankings +
   # TotalLosses at the bottom of the figure
   geom_text(aes(x = fct_reorder(item, desc(estimate)), y = -10, label = TotalLosses))
 
-
+# TODO convert into shiny app
+# https://rmarkdown.rstudio.com/flexdashboard/
